@@ -8,6 +8,7 @@ repositories {
 dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.6.1'
+    compile 'commons-io:commons-io:2.5'
 }
 
 jar {
