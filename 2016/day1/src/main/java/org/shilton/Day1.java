@@ -2,27 +2,42 @@ package org.shilton;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
+import static java.lang.Integer.valueOf;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
 import static java.nio.file.Paths.get;
 
+/*
+The answer to part 1 is 242
+ */
+
 public class Day1 {
 
-    public static void main(String[] args) throws IOException {
-        Day1 day1 = new Day1();
-        day1.readInstructions();
-        System.out.println(day1.howManyBlocksAwayIsSanta());
-    }
+    private static Direction direction;
+    private static Point location;
+    private static Set<String> visitedLocations;
 
-    private Direction direction = Direction.NORTH;
-    private Point location = new Point(0, 0);
+    public static void main(String[] args) throws IOException {
+
+        direction = Direction.NORTH;
+        location = new Point(0, 0);
+        visitedLocations = new HashSet<>();
+
+        Day1 day1part1 = new Day1();
+        day1part1.readInstructionsDay1Part1();
+        System.out.println(day1part1.howManyBlocksAwayIsSanta());
+
+        direction = Direction.NORTH;
+        location = new Point(0, 0);
+        visitedLocations = new HashSet<>();
+
+        Day1 day1part2 = new Day1();
+        day1part2.readInstructionsDay1Part2();
+        System.out.println(day1part2.howManyBlocksAwayIsSanta());
+    }
 
     private void turnLeft() {
         if (direction == Direction.NORTH)
@@ -66,10 +81,10 @@ public class Day1 {
         else
             turnLeft();
 
-        move(aMove.charAt(1));
+        move(valueOf(aMove.substring(1)));
     }
 
-    public void readInstructions() throws IOException {
+    public void readInstructionsDay1Part1() throws IOException {
 
         String fileString = new String(readAllBytes(get("/home/local/IMPELLO/shilton/projects/advent-of-code/2016/day1/src/main/resources/file/day1.txt")), UTF_8);
 
@@ -77,6 +92,29 @@ public class Day1 {
 
         for (String move : moves) {
             process(move);
+        }
+    }
+
+    public void readInstructionsDay1Part2() throws IOException {
+
+        String fileString = new String(readAllBytes(get("/home/local/IMPELLO/shilton/projects/advent-of-code/2016/day1/src/main/resources/file/day1.txt")), UTF_8);
+        String[] moves = fileString.split(", ");
+
+        boolean hqFound = false;
+
+        for (String move : moves) {
+
+            if (!hqFound) {
+                process(move);
+
+                String currentLocation = location.toString();
+                System.out.println("currentLocation = " + currentLocation);
+
+                if (visitedLocations.contains(currentLocation))
+                    hqFound = true;
+                else
+                    visitedLocations.add(currentLocation);
+            }
         }
     }
 
