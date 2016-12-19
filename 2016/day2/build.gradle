@@ -12,7 +12,7 @@ dependencies {
 }
 
 jar {
-    baseName = 'aoc-2016-day-1'
+    baseName = 'aoc-2016-day-2'
     version =  '0.1.0'
 }
 
