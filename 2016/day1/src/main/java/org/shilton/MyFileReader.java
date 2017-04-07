@@ -1,27 +1,21 @@
 package org.shilton;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Scanner;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.readAllBytes;
+import static java.nio.file.Paths.get;
 
 public class MyFileReader {
-    public static void main(String[] args) {
 
-        MyFileReader myFileReader = new MyFileReader();
-        myFileReader.read();
-    }
+    public static String readStringFromFilename(final String filename) {
 
-    public void read() {
-
-        File file1 = new File("/home/local/IMPELLO/shilton/projects/advent-of-code/2016/day1/src/main/resources/file/day1.txt");
-
-        if (file1.exists()) {
-            System.out.println("File exists");
-        } else {
-            System.out.println("File does not exist");
-        }
+    	String fileString = "";
+    	try {
+			fileString = new String(readAllBytes(get("./src/main/resources/file/" + filename)), UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return fileString;
     }
 }
