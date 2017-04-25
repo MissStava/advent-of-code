@@ -9,7 +9,7 @@ import static java.lang.Integer.valueOf;
 
 /*
 The answer to part 1 is 242
-The answer to part 2 is 288
+The answer to part 2 is 150
  */
 
 public class Day1 {
