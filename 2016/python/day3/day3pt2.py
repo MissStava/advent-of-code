@@ -11,8 +11,4 @@ for x in range(0,len(elements),9):
 
 print validTriangles
 
-# 1332 (too low)
-# 1714 (too low)
-# 1914 (too high)
-# 1889 (not right)
 # Part 2 answer is 1839
