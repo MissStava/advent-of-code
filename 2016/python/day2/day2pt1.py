@@ -27,4 +27,4 @@ for line in file:
 print result
 
 
-# Part1 = 95549
+# 95549
