@@ -19,7 +19,7 @@ for instr in directions:
 			facing = 0
 
 	for x in range(int(instr[1:])):
-		position = (position[0]+direction[facing][0],position[1]+direction[facing][1])
+		position = (position[0] + direction[facing][0], position[1] + direction[facing][1])
 		if hqNotFound:
 			if position in visitedPositions:
 				hq = position
