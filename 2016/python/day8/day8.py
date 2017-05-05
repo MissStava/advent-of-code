@@ -51,3 +51,6 @@ for instr in file:
 	print
 
 print sum(x.count('#') for x in display)
+
+# 116
+# UPOJFLBCEZ
