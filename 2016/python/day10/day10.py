@@ -2,15 +2,9 @@ import re
 
 file = open("../inputs/day10.txt", "r")
 
-file = ["value 5 goes to bow 2",
-		"bot 2 gives low to bot 1 and high to bot 0",
-		"value 3 goes to bot 1",
-		"bot 1 gives low to output 1 and high to bot 0",
-		"bot 0 gives low to output 2 and high to output 0",
-		"value 2 goes to bot 2"]
-
 botGiving = {}
 botHas = {}
+binHas = {}
 
 for line in file:
 	line = line.strip()
@@ -18,35 +12,93 @@ for line in file:
 	firstWord = line.split(' ', 1)[0]
 
 	if firstWord == 'bot':
-		result = re.search(".+([0-9]+).+([0-9]+).+([0-9]+)", line)
+		result = re.search("([0-9]+)[\D]+(bot|output)\s([0-9]+)[\D]+\s(bot|output)\s([0-9]+)", line)
 		giverBot = result.group(1)
-		lowReceiverBot = result.group(2)
-		highReceiverBot = result.group(3)
-		botGiving[giverBot] = (lowReceiverBot, highReceiverBot)
+		lowReceiverBotType = result.group(2)
+		lowReceiverBotValue = result.group(3)
+		highReceiverBotType = result.group(4)
+		highReceiverBotValue = result.group(5)
+		botGiving[giverBot] = (lowReceiverBotType[0]+lowReceiverBotValue, highReceiverBotType[0]+highReceiverBotValue)
 	else:
-		result = re.search(".+([0-9]+).+([0-9]+)", line)
+		result = re.search("([0-9]+)[\D]+([0-9]+)", line)
 		value = result.group(1)
 		receiverBot = result.group(2)
+
 		if receiverBot not in botHas:
 			botHas[receiverBot] = []
 		botHas[receiverBot].append(value)
 
-print botGiving
-print botHas
+actionTaken = False
+escapeToken = 0
+while True:
+	for bot in botHas:
+		if len(botHas[bot]) >= 2:
+			actionTaken = True
 
-for bot in botHas:
-	if len(botHas[bot]) == 2:
-		lowReceiverBot = botGiving[bot][0]
-		highReceiverBot = botGiving[bot][1]
+			value1 = int(botHas[bot][0])
+			value2 = int(botHas[bot][1])
 
-		if lowReceiverBot not in botHas:
-			botHas[lowReceiverBot] = []
-		if highReceiverBot not in botHas:
-			botHas[highReceiverBot] = []
-		for value in botHas[bot]:
-			if value < 5:
-				botHas[lowReceiverBot].append(value)
+			if (value1 == 61 and value2 == 17) or (value1 == 17 and value2 == 61):
+				print "***"
+				print bot
+				print "***"
+
+			lowReceiverBot = botGiving[bot][0]
+			highReceiverBot = botGiving[bot][1]
+
+			lowReceiverBotType = lowReceiverBot[0]
+			lowReceiverBotValue = lowReceiverBot[1:]
+			highReceiverBotType = highReceiverBot[0]
+			highReceiverBotValue = highReceiverBot[1:]
+
+			if lowReceiverBotType == "o":
+				if lowReceiverBotValue not in binHas:
+					binHas[lowReceiverBotValue] = []
 			else:
-				botHas[highReceiverBot].append(value)
+				if lowReceiverBot[1:] not in botHas:
+					botHas[lowReceiverBot[1:]] = []
 
-print botHas
+			if highReceiverBotType == "o":
+				if highReceiverBotValue not in binHas:
+					binHas[highReceiverBotValue] = []
+			else:
+				if highReceiverBot[1:] not in botHas:
+					botHas[highReceiverBot[1:]] = []
+
+			if value1 < value2:
+				if lowReceiverBotType != "o": 
+					botHas[lowReceiverBotValue].append(str(value1))
+				else:
+					binHas[lowReceiverBotValue].append(str(value1))
+
+				if highReceiverBotType != "o": 
+					botHas[highReceiverBot[1:]].append(str(value2))
+				else:
+					binHas[highReceiverBot[1:]].append(str(value2))
+
+			else:
+				if lowReceiverBotType != "o": 
+					botHas[lowReceiverBot[1:]].append(str(value2))
+				else:
+					binHas[lowReceiverBot[1:]].append(str(value2))
+
+				if highReceiverBotType != "o": 
+					botHas[highReceiverBot[1:]].append(str(value1))
+				else:
+					binHas[highReceiverBot[1:]].append(str(value1))
+
+			botHas[bot] = []
+			break
+	if actionTaken:
+		actionTaken = False
+	else:
+		break
+
+print
+
+# bot 113
+
+print binHas['0']
+print binHas['1']
+print binHas['2']
+# bin 12803
