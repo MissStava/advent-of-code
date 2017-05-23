@@ -5,19 +5,21 @@ goalState = [[],[],[],["HG","HM","LG","LM"]]
 seenStates = [([["HM", "LM"],["HG"],["LG"],[]],0)]
 statesToTry = [([["HM", "LM"],["HG"],["LG"],[]],0,0)]
 
-goalState = [[],[],["COG","COM","CUG","CUM","PLG","PLM","PRG", "PRM","RUG","RUM"],[]]
+goalState = [[],[],[],["COG","COM","CUG","CUM","PLG","PLM","PRG", "PRM","RUG","RUM"]]
 seenStates = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0)]
 statesToTry = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0,0)]
+
+passesMade = 0
 
 goalSteps = 0
 
 def is_state_valid(state):
 	for floor in state:
 		for item in floor:
-			element = item[0]
-			component = item[1]
+			element = item[:2]
+			component = item[-1]
 
-			if component == "M" and element+"G" not in floor and len([x[1] for x in floor if x[1] == 'G']) > 0:
+			if component == "M" and element+"G" not in floor and len([x[-1] for x in floor if x[-1] == 'G']) > 0:
 				return False
 	return True
 
@@ -43,8 +45,17 @@ def add_seen_state(state, elevatorAt, seen):
 def add_state_to_try(state, elevatorAt, steps, statesToTry):
 	statesToTry.append((state, elevatorAt, steps))
 
+def item_is_a_pair(item):
+	return True if len(item) == 2 and item[0][:2] == item[1][:2] else False
+
 def process_move(state, items, elevator, elevatorAt):
+	validDoubleAdded = False
+	# pairAlreadyMoved = False
 	for item in items:
+
+		if len(item) == 1 and validDoubleAdded and elevatorAt > elevator:
+			break
+
 		currentState = copy.deepcopy(state)
 		move_items_and_sort(currentState, item, elevator, elevatorAt)
 		fill_empty_floors(currentState)
@@ -61,9 +72,17 @@ def process_move(state, items, elevator, elevatorAt):
 			return True
 			break
 
+		# if item_is_a_pair(item) and pairAlreadyMoved:
+		# 	continue
+
 		add_seen_state(currentState, elevatorAt, seenStates)
 		add_state_to_try(currentState, elevatorAt, steps, statesToTry)
 		add_seen_state(currentState, elevatorAt, seenStates)
+
+		if len(item) == 2:
+			validDoubleAdded = True
+		# if item_is_a_pair(item):
+		# 	pairAlreadyMoved = True
 	return False
 
 while True:
@@ -83,10 +102,24 @@ while True:
 		goalStateFound = process_move(state, items, elevator, elevatorUp)
 
 	if elevator > 0 and not goalStateFound:
-		goalStateFound = process_move(state, items, elevator, elevatorDown)
+
+		itemsBelow = 0
+		for floor in range(elevator):
+			itemsBelow += len(state[floor])
+
+		if itemsBelow > 0:
+			goalStateFound = process_move(state, items, elevator, elevatorDown)
+
+	passesMade += 1
+	if passesMade % 100 == 0:
+		print str(passesMade) + " " + str(len(statesToTry))
 
 	if goalStateFound:
-
+		print "statesToTry = " + str(statesToTry)
+		print "state = " + str(nextStateToTry)
 		break
 
 print "number of steps = " + str(steps)
+
+# 24 is too low
+# 33!

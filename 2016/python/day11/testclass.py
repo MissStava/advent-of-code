@@ -96,5 +96,16 @@ class TestDay11(unittest.TestCase):
 		add_state_to_try(state, elevatorAt, steps, statesToTry)
 		self.assertEqual(statesToTry, [([['LM'],['HG','HM'],['LG'],[]], 1, 1),([['LM'],[],['HG','HM','LG'],[]], 2, 2)])
 
+	def test_item_is_a_pair(self):
+
+		item = ['HM']
+		self.assertEqual(item_is_a_pair(item), False)
+
+		item = ['HM','HG']
+		self.assertEqual(item_is_a_pair(item), True)
+
+		item = ['HM','LM']
+		self.assertEqual(item_is_a_pair(item), False)
+
 if __name__ == '__main__':
 	unittest.main()
