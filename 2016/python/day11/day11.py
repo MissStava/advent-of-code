@@ -9,6 +9,10 @@ goalState = [[],[],[],["COG","COM","CUG","CUM","PLG","PLM","PRG", "PRM","RUG","R
 seenStates = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0)]
 statesToTry = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0,0)]
 
+goalState = [[],[],[],["COG","COM","CUG","CUM","DIG","DIM","ELG","ELM","PLG","PLM","PRG", "PRM","RUG","RUM"]]
+seenStates = [([["DIG","DIM","ELG","ELM","PRG", "PRM"],["COM","CUM","PLM","RUM"],[]],0)]
+statesToTry = [([["DIG","DIM","ELG","ELM","PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0,0)]
+
 passesMade = 0
 
 goalSteps = 0
@@ -50,11 +54,14 @@ def item_is_a_pair(item):
 
 def process_move(state, items, elevator, elevatorAt):
 	validDoubleAdded = False
-	# pairAlreadyMoved = False
+	validSingleAdded = False
 	for item in items:
-
-		if len(item) == 1 and validDoubleAdded and elevatorAt > elevator:
-			break
+		if elevatorAt > elevator:
+			if len(item) == 1 and validDoubleAdded:
+				break
+		else:
+			if len(item) == 2 and validSingleAdded:
+				break
 
 		currentState = copy.deepcopy(state)
 		move_items_and_sort(currentState, item, elevator, elevatorAt)
@@ -72,17 +79,15 @@ def process_move(state, items, elevator, elevatorAt):
 			return True
 			break
 
-		# if item_is_a_pair(item) and pairAlreadyMoved:
-		# 	continue
-
 		add_seen_state(currentState, elevatorAt, seenStates)
 		add_state_to_try(currentState, elevatorAt, steps, statesToTry)
 		add_seen_state(currentState, elevatorAt, seenStates)
 
 		if len(item) == 2:
 			validDoubleAdded = True
-		# if item_is_a_pair(item):
-		# 	pairAlreadyMoved = True
+		else:
+			validSingleAdded = True
+
 	return False
 
 while True:
@@ -95,13 +100,14 @@ while True:
 	steps = nextStateToTry[2] + 1
 	elevatorUp = elevator + 1
 	elevatorDown = elevator - 1
-	items = list(combinations(state[elevator], 2)) + list(combinations(state[elevator], 1))
 	goalStateFound = False
 
 	if elevator < 3 and not goalStateFound:
+		items = list(combinations(state[elevator], 2)) + list(combinations(state[elevator], 1))
 		goalStateFound = process_move(state, items, elevator, elevatorUp)
 
 	if elevator > 0 and not goalStateFound:
+		items = list(combinations(state[elevator], 1)) + list(combinations(state[elevator], 2))
 
 		itemsBelow = 0
 		for floor in range(elevator):
