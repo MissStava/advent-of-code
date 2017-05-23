@@ -1,4 +1,4 @@
-from day11 import is_state_valid, fill_empty_floors, move_items_and_sort
+from day11 import *
 import unittest
 
 class TestDay11(unittest.TestCase):
@@ -49,6 +49,52 @@ class TestDay11(unittest.TestCase):
 		move_items_and_sort(state, ['HM','LM'], 1, 2)
 		self.assertEqual(state, [[],[],['HG','HM','LG','LM'],[]])
 
+	def test_state_seen_before(self):
+
+		state = [['HM','LM'],['HG'],['LG'],[]]
+		elevatorAt = 0
+		seenStates = [([['HM','LM'],['HG'],['LG'],[]], 0)]
+		self.assertEqual(state_seen_before(state, elevatorAt, seenStates), True)
+
+		state = [['HM','LM'],['HG'],['LG'],[]]
+		elevatorAt = 0
+		seenStates = ([['LM'],['HG','HM'],['LG'],[]], 1)
+		self.assertEqual(state_seen_before(state, elevatorAt, seenStates), False)
+
+		state = [['HM','LM'],['HG'],['LG'],[]]
+		elevatorAt = 1
+		seenStates = ([['LM'],['HG','HM'],['LG'],[]], 2)
+		self.assertEqual(state_seen_before(state, elevatorAt, seenStates), False)
+
+	def test_add_seen_state(self):
+
+		state = [['HM','LM'],['HG'],['LG'],[]]
+		elevatorAt = 0
+		seenStates = []
+		add_seen_state(state, elevatorAt, seenStates)
+		self.assertEqual(seenStates, [([['HM','LM'],['HG'],['LG'],[]], 0)])
+
+		state = [['HM','LM'],['HG'],['LG'],[]]
+		elevatorAt = 1
+		seenStates = [([['HM','LM'],['HG'],['LG'],[]], 0)]
+		add_seen_state(state, elevatorAt, seenStates)
+		self.assertEqual(seenStates, [([['HM','LM'],['HG'],['LG'],[]], 0), ([['HM','LM'],['HG'],['LG'],[]], 1)])
+
+	def test_add_states_to_try(self):
+
+		state = [['LM'],['HG','HM'],['LG'],[]]
+		elevatorAt = 1
+		statesToTry = []
+		steps = 1
+		add_state_to_try(state, elevatorAt, steps, statesToTry)
+		self.assertEqual(statesToTry, [([['LM'],['HG','HM'],['LG'],[]], 1, 1)])
+
+		state = [['LM'],[],['HG','HM','LG'],[]]
+		elevatorAt = 2
+		statesToTry = [([['LM'],['HG','HM'],['LG'],[]], 1, 1)]
+		steps = 2
+		add_state_to_try(state, elevatorAt, steps, statesToTry)
+		self.assertEqual(statesToTry, [([['LM'],['HG','HM'],['LG'],[]], 1, 1),([['LM'],[],['HG','HM','LG'],[]], 2, 2)])
 
 if __name__ == '__main__':
 	unittest.main()

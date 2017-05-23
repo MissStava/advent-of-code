@@ -2,9 +2,14 @@ import copy
 from itertools import combinations
 
 goalState = [[],[],[],["HG","HM","LG","LM"]]
-seenStates = [[["HM", "LM"],["HG"],["LG"],[]]]
+seenStates = [([["HM", "LM"],["HG"],["LG"],[]],0)]
 statesToTry = [([["HM", "LM"],["HG"],["LG"],[]],0,0)]
-# statesToTry = [([[], ['HM'], ['HG', 'LG', 'LM'], []], 1, 0)]
+
+goalState = [[],[],["COG","COM","CUG","CUM","PLG","PLM","PRG", "PRM","RUG","RUM"],[]]
+seenStates = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0)]
+statesToTry = [([["PRG", "PRM"],["COG","CUG","PLG","RUG"],["COM","CUM","PLM","RUM"],[]],0,0)]
+
+goalSteps = 0
 
 def is_state_valid(state):
 	for floor in state:
@@ -29,151 +34,59 @@ def move_items_and_sort(state, items, elevatorStart, elevatorStop):
 	state[elevatorStart] = sorted(state[elevatorStart])
 	state[elevatorStop] = sorted(state[elevatorStop])
 
-# goalStateFound = False
-# goalSteps = 0
-# while not goalStateFound:
-# # for j in range(4):
+def state_seen_before(state, elevatorAt, seen):
+	return True if (state, elevatorAt) in seen else False
 
-# 	print "statesToTry = " + str(statesToTry)
+def add_seen_state(state, elevatorAt, seen):
+	seen.append((state, elevatorAt))
 
-# 	nextStateToTry = statesToTry.pop(0)
-# 	state = nextStateToTry[0]
-# 	elevator = nextStateToTry[1]
-# 	steps = nextStateToTry[2] + 1
-# 	elevatorUp = elevator + 1
-# 	elevatorDown = elevator - 1
+def add_state_to_try(state, elevatorAt, steps, statesToTry):
+	statesToTry.append((state, elevatorAt, steps))
 
-# 	if elevator < 3 and not goalStateFound:
+def process_move(state, items, elevator, elevatorAt):
+	for item in items:
+		currentState = copy.deepcopy(state)
+		move_items_and_sort(currentState, item, elevator, elevatorAt)
+		fill_empty_floors(currentState)
 
-# 		currentState = copy.deepcopy(state)
-# 		floor = currentState[elevator]
-# 		floorUp = currentState[elevatorUp]
-# 		multiItemMoved = False
+		if state_seen_before(currentState, elevatorAt, seenStates):
+			continue
 
-# 		for items in combinations(floor, 2):
+		if not is_state_valid(currentState):
+			continue
+			
+		if currentState == goalState:
+			goalSteps = steps
+			print "SUCCESS"
+			return True
+			break
 
-# 			xCurrentState = copy.deepcopy(currentState)
-# 			xFloor = xCurrentState[elevator]
-# 			xFloorUp = xCurrentState[elevatorUp]
+		add_seen_state(currentState, elevatorAt, seenStates)
+		add_state_to_try(currentState, elevatorAt, steps, statesToTry)
+		add_seen_state(currentState, elevatorAt, seenStates)
+	return False
 
-# 			move_items_and_sort(xCurrentState, items, elevator, elevatorUp)
+while True:
 
-# 			fill_empty_floors(xCurrentState)
+	# print "statesToTry = " + str(statesToTry)
 
-# 			if (items, xFloorUp) in seenStates:
-# 				continue
-# 			else:
-# 				if isStateValid(xCurrentState):
-# 					if xCurrentState == goalState:
-# 						goalStateFound = True
-# 						goalSteps = steps
-# 						print "SUCCESS"
-# 						break
+	nextStateToTry = statesToTry.pop(0)
+	state = nextStateToTry[0]
+	elevator = nextStateToTry[1]
+	steps = nextStateToTry[2] + 1
+	elevatorUp = elevator + 1
+	elevatorDown = elevator - 1
+	items = list(combinations(state[elevator], 2)) + list(combinations(state[elevator], 1))
+	goalStateFound = False
 
-# 					print "xCurrentState = " + str(xCurrentState)
-# 					print "goalState = " + str(goalState)
-# 					print "steps = " + str(steps)
-# 					print
-# 					statesToTry.append((xCurrentState, elevatorUp, steps))
-# 					seenStates.append((items, xFloorUp))
-# 					multiItemMoved = True
+	if elevator < 3 and not goalStateFound:
+		goalStateFound = process_move(state, items, elevator, elevatorUp)
 
-# 		if goalStateFound:
-# 			break
+	if elevator > 0 and not goalStateFound:
+		goalStateFound = process_move(state, items, elevator, elevatorDown)
 
-# 		if not multiItemMoved:
-# 			currentState = copy.deepcopy(state)
-# 			floor = currentState[elevator]
-# 			floorUp = currentState[elevatorUp]
+	if goalStateFound:
 
-# 			for item in floor:
+		break
 
-# 				xCurrentState = copy.deepcopy(currentState)
-# 				xFloor = xCurrentState[elevator]
-# 				xFloorUp = xCurrentState[elevatorUp]
-
-# 				move_items_and_sort(xCurrentState, [item], elevator, elevatorUp)
-
-# 				fill_empty_floors(xCurrentState)
-
-# 				if (item, xFloorUp) in seenStates:
-# 					continue
-# 				else:
-# 					if isStateValid(xCurrentState):
-# 						if xCurrentState == goalState:
-# 							goalStateFound = True
-# 							goalSteps = steps
-# 							print "SUCCESS"
-# 							break
-
-# 						print "xCurrentState = " + str(xCurrentState)
-# 						print "goalState = " + str(goalState)
-# 						print "steps = " + str(steps)
-# 						print
-
-# 						statesToTry.append((xCurrentState, elevatorUp, steps))
-# 						seenStates.append((item, xFloorUp))
-
-# 	if elevator > 0 and not goalStateFound:
-
-# 		currentState = copy.deepcopy(state)
-# 		floor = currentState[elevator]
-# 		floorDown = currentState[elevatorDown]
-# 		multiItemMoved = False
-
-# 		for items in combinations(floor, 2):
-
-# 			xCurrentState = copy.deepcopy(currentState)
-# 			xFloor = xCurrentState[elevator]
-# 			xFloorDown = xCurrentState[elevatorDown]
-
-# 			move_items_and_sort(xCurrentState, items, elevator, elevatorDown)
-
-# 			fill_empty_floors(xCurrentState)
-
-# 			if (item, floorDown) in seenStates:
-# 				continue
-# 			else:
-# 				if isStateValid(xCurrentState):
-# 					if xCurrentState == goalState:
-# 						goalStateFound = True
-# 						goalSteps = steps
-# 						print "SUCCESS"
-# 						break
-
-# 					statesToTry.append((xCurrentState, elevatorDown, steps))
-# 					seenStates.append((item, floorDown))
-# 					multiItemMoved = True
-		
-# 		if goalStateFound:
-# 			break
-
-# 		if not multiItemMoved:
-# 			currentState = copy.deepcopy(state)
-# 			floor = currentState[elevator]
-# 			floorDown = currentState[elevatorDown]
-
-# 			for item in floor:
-
-# 				xCurrentState = copy.deepcopy(currentState)
-# 				xFloor = xCurrentState[elevator]
-# 				xFloorDown = xCurrentState[elevatorDown]
-d
-# 				move_items_and_sort(xCurrentState, [item], elevator, elevatorDown)
-
-# 				fill_empty_floors(xCurrentState)
-
-# 				if (item, floorDown) in seenStates:
-# 					continue
-# 				else:
-# 					if isStateValid(xCurrentState):					
-# 						if xCurrentState == goalState:
-# 							goalStateFound = True
-# 							goalSteps = steps
-# 							print "SUCCESS"
-# 							break
-
-# 						statesToTry.append((xCurrentState, elevatorDown, steps))
-# 						seenStates.append((item, floorDown))		
-
-# print "number of steps = " + str(goalSteps)
+print "number of steps = " + str(steps)
