@@ -6,9 +6,9 @@ chars.append(chars[0])
 print sum([int(chars[n]) for n in list(range(len(chars)-1)) if chars[n] == chars[n+1]])
 # Answer = 1177
 
-
 halfListLen = len(chars)/2
-sum = 0
+
+sum2 = 0
 for x in range(len(chars)):
     thisChar = int(chars[x])
     if x >= halfListLen:
@@ -17,7 +17,7 @@ for x in range(len(chars)):
         nextChar = int(chars[x+halfListLen])
 
     if thisChar == nextChar:
-        sum += thisChar
+        sum2 += thisChar
 
-print sum
+print sum2
 # Answer = 1060
