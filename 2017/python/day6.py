@@ -35,3 +35,4 @@ while True:
 print countAtFirstOccurence
 # Answer = 4074
 print countAtSecondOccurence - countAtFirstOccurence
+# Answer = 2793
