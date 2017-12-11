@@ -1,36 +1,24 @@
 file = open("day11inputs", "r")
-input = file.read()
+input = file.read().strip('\n')
 steps = input.split(',')
 
-location = (0,0,0)
-maxDistance = 0
+currentLocation = (0,0,0)
+furthestDistance = 0
+directionsOf = {'n': (0,1,-1),
+              'ne':(1,0,-1),
+              'se':(1,-1,0),
+              's': (0,-1,1),
+              'sw':(-1,0,1),
+              'nw':(-1,1,0)}
 
 for step in steps:
-    if step == 'n':
-        location = (location[0],location[1]+1,location[2]-1)
+    currentLocation = tuple(sum(point) for point in zip(currentLocation, directionsOf[step]))
 
-    elif step == 'ne':
-        location = (location[0]+1,location[1],location[2]-1)
+    distance = max([abs(n) for n in currentLocation])
+    if distance > furthestDistance:
+        furthestDistance = distance
 
-    elif step == 'se':
-        location = (location[0]+1,location[1]-1,location[2])
-
-    elif step == 's':
-        location = (location[0],location[1]-1,location[2]+1)
-
-    elif step == 'sw':
-        location = (location[0]-1,location[1],location[2]+1)
-
-    elif step == 'nw':
-        location = (location[0]-1,location[1]+1,location[2])
-
-    tempLocation = [abs(n) for n in location]
-    tempMaxDistance = max(tempLocation)
-    if tempMaxDistance > maxDistance:
-        maxDistance = tempMaxDistance
-
-print location
+print max([abs(n) for n in currentLocation])
 # 764
-
-print maxDistance
+print furthestDistance
 # 1532
