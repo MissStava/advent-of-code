@@ -38,27 +38,18 @@ print numbers[0] * numbers[1]
 # 6909
 
 
-
-
-# lengths = [ord(c) for c in '106,118,236,1,130,0,235,254,59,205,2,87,129,25,255,118']
-lengths = [ord(c) for c in '1,2,3']
-# lengths = [20]
+lengths = [ord(c) for c in '106,118,236,1,130,0,235,254,59,205,2,87,129,25,255,118']
 numbers = range(256)
 skipSize = 0
 currentPosition = 0
 
 lengths.extend([17, 31, 73, 47, 23])
 
-print
-print lengths
-
 for round in range(64):
     for length in lengths:
-
         numbersToReverse = []
         loopPosition = currentPosition
         for num in range(length):
-
             numbersToReverse.append(numbers[loopPosition])
 
             loopPosition += 1
@@ -68,7 +59,6 @@ for round in range(64):
         numbersToReverse.reverse()
         loopPosition = currentPosition
         for num in numbersToReverse:
-
             numbers[loopPosition] = num
 
             loopPosition += 1
@@ -79,11 +69,8 @@ for round in range(64):
         while currentPosition > 255:
             currentPosition -= 256
 
-    print numbers
+        skipSize += 1
 
-sparseHash = numbers
-
-print
 denseHash = []
 for x in range(16):
     denseHash.append(reduce(lambda i, j: i ^ j, numbers[:16]))
@@ -94,18 +81,5 @@ for x in range(16):
     if len(denseHashAsHex[x]) == 1:
         denseHashAsHex[x] = '0'+denseHashAsHex[x]
 
-
-knottHash = ''.join(denseHashAsHex)
-
-print
-print sparseHash
-print denseHash
-print denseHashAsHex
-print knottHash
-
-print
-print [reduce(lambda i, j: i ^ j, [65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22])]
-
-# 16375e9e032601bd6bafc35c0a03d849 is wrong
-# 16375e9e032610bd6bafc35ca003d849
-# 37920559104c675143866bd932044c9e
+print ''.join(denseHashAsHex)
+# 9d5f4561367d379cfbf04f8c471c0095
