@@ -30,8 +30,7 @@ for step in steps:
         maxDistance = tempMaxDistance
 
 print location
-# 522 is too low
-# 765 is too high
+# 764
 
 print maxDistance
 # 1532
