@@ -1,63 +1,44 @@
 file = open("day13inputs", "r")
 lines = [line.rstrip('\n') for line in file.readlines()]
 
-def initialiseFirewall(lines):
-    firewall = {}
-    for line in lines:
-        depth = int(line.split(': ')[0])
-        rangeNum = int(line.split(': ')[1])
-        firewall[depth] = {'range':rangeNum, 'position':0, 'direction':'D'}
+firewall = {}
+for line in lines:
+    depth = int(line.strip().split(': ')[0])
+    rangeNum = int(line.strip().split(': ')[1])
+    firewall[depth] = rangeNum
 
-    return firewall
+def caught(depth, rangeNum):
+    return depth % ((rangeNum - 1) * 2) == 0
 
-def moveScannersOn(firewall):
-    for depth in firewall:
-        maxRange = firewall[depth]['range']
-        position = firewall[depth]['position']
-        direction = firewall[depth]['direction']
+caughtSeverity = 0
+for position in range(87):
+    if position not in firewall:
+        continue
 
-        if direction == 'D':
-            position += 1
-            if position == maxRange-1:
-                firewall[depth]['direction'] = 'U'
-        else:
-            position -= 1
-            if position == 0:
-                firewall[depth]['direction'] = 'D'
-        firewall[depth]['position'] = position
-
-detectionPoints = []
-for depth in firewall:
-    detectionPoints.append((firewall[depth]['range']-1)*2)
-
-print 
-
-delay = 0
-while True:
-    caughtSeverity = 0
-    packetDepth = 0
-    waited = 0
-    firewall = initialiseFirewall(lines)
-
-    delay += 2
-
-    while packetDepth <= 87:
-        if waited > delay:
-            packetDepth += 1
-            if packetDepth in firewall and firewall[packetDepth]['position'] == 0:
-                caughtSeverity += (packetDepth*firewall[packetDepth]['range'])
-                break
-        else:
-            waited += 1
-
-        moveScannersOn(firewall)
-
-    if caughtSeverity == 0:
-        print caughtSeverity
-        break
+    depth = position
+    rangeNum = firewall[depth]
+    if caught(depth, rangeNum):
+       caughtSeverity += (depth * rangeNum)
 
 print caughtSeverity
 # 1904
 
+delay = 0
+while True:
+    notCaught = True
+    for position in range(87):
+        if position not in firewall:
+            continue
+
+        depth = position
+        rangeNum = firewall[depth]
+        if caught(depth + delay, rangeNum):
+           notCaught = False
+           delay += 1
+           break
+
+    if notCaught:
+        break
+
 print delay
-# not 2, or 49, or 86, or 73, or 72
+# 3833504
