@@ -1,9 +1,13 @@
 import re
+<<<<<<< HEAD
 import copy
+=======
+>>>>>>> sweep up commit
 
 file = open("input", "r")
 
 lines = [x.strip('\n)') for x in file.readlines()]
+<<<<<<< HEAD
 # lines = ["[1518-11-01 00:00] Guard #10 begins shift",
 #         "[1518-11-01 00:05] falls asleep",
 #         "[1518-11-01 00:25] wakes up",
@@ -56,4 +60,44 @@ print "Day 4 Part 1 = " + str(highest_guard_id * max(zip(guard_asleep[highest_gu
 
 print "Day 4 Part 2 = " + str(max([(k, max(d.iteritems(), key=lambda a:a[1])) for k, d in guard_asleep.iteritems()], key=lambda a:a[1][1]))
 # 65854
+=======
+
+# [1518-11-21 23:58] Guard #3541 begins shift
+# m = re.search('#(\d{1,4})\s@\s(\d*,\d*):\s(\d*x\d*)', claim)
+
+guard_sleep_totals = dict()
+guard_id = ''
+for line in sorted(lines):
+  guard_start = re.search('#(\d*)', line)
+  if guard_start != None:
+    guard_id = guard_start.group(1)
+    start_hour = 0
+    start_minute = 0
+    end_hour = 0
+    end_minute = 0
+    # print guard_id
+  else:
+    guard_asleep = re.search('(\d\d):(\d\d)]\sfalls asleep', line)
+    if guard_asleep != None:
+      start_hour = guard_asleep.group(1)
+      start_minute = guard_asleep.group(2)
+      end_hour = 0
+      end_minute = 0
+      # print start_hour + " " + start_minute
+    else:
+      guard_awake = re.search('(\d\d):(\d\d)]\swakes up', line)
+      if guard_awake != None:
+        end_hour = guard_awake.group(1)
+        end_minute = guard_awake.group(2)
+        # print "Guard " + guard_id + " spent " + str(int(end_minute)-int(start_minute)) + " minutes asleep"
+
+        if guard_id not in guard_sleep_totals:
+          guard_sleep_totals[guard_id] = 0
+
+        guard_sleep_totals[guard_id] += (int(end_minute)-int(start_minute))
+
+        # print end_hour + " " + end_minute
+
+
+>>>>>>> sweep up commit
 
