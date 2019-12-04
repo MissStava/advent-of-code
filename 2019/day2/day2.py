@@ -1,32 +1,39 @@
-import copy
-
 file = open("input", "r")
-input = file.read().strip('\n')
-steps = map(int, input.split(','))
+initial_state = map(int, file.read().strip('\n').split(','))
 
 
-for x in range(99):
-    for y in range(99):
+for noun in range(99):
+    for verb in range(99):
 
-        memory = list(steps)
+        memory = list(initial_state)
 
-        pos = 0
-        memory[1] = x
-        memory[2] = y
+        address = 0
+        memory[1] = noun
+        memory[2] = verb
 
         while True:
-            if memory[pos] == 1:
-                memory[memory[pos+3]] = memory[memory[pos+1]] + memory[memory[pos+2]]
-            elif memory[pos] == 2:
-                memory[memory[pos+3]] = memory[memory[pos+1]] * memory[memory[pos+2]]
-            elif memory[pos] == 99:
+            instruction_pointer = address
+            opcode = memory[instruction_pointer]
+
+            if opcode == 1:
+                param1 = memory[instruction_pointer+1]
+                param2 = memory[instruction_pointer+2]
+                param3 = memory[instruction_pointer+3]
+                memory[param3] = memory[param1] + memory[param2]
+                address += 4
+
+            elif opcode == 2:
+                param1 = memory[instruction_pointer+1]
+                param2 = memory[instruction_pointer+2]
+                param3 = memory[instruction_pointer+3]
+                memory[param3] = memory[param1] * memory[param2]
+                address += 4
+
+            elif opcode == 99:
                 break
 
-            pos += 4
-            if pos >= len(memory):
-                pos = pos - int(len(memory))
-
         if memory[0] == 19690720:
-            print 100 * x + y
+            print 100 * noun + verb
 
 # 9706670
+# 2552
