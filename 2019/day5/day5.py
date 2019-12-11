@@ -1,8 +1,18 @@
 file = open("input", "r")
 initial_state = map(int, file.read().strip('\n').split(','))
 
+def immediate_mode(modes, pos):
+    return len(modes) >= pos+1 and modes[pos] == '1'
+
+def immediate_value(pos):
+    return memory[pos]
+
+def position_value(pos):
+    return memory[memory[pos]]
+
 memory = list(initial_state)
 address = 0
+opcode_sizes = {1:4,2:4,3:2,4:2,5:3,6:3,7:4,8:4}
 
 while True:
     instruction_pointer = address
@@ -11,148 +21,47 @@ while True:
     modes = instruction[:-2][::-1]
 
     if opcode == 1:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        param3 = memory[instruction_pointer+3]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        memory[param3] = val1 + val2
-
-        address += 4
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        memory[memory[instruction_pointer+3]] = val1 + val2
+        address += opcode_sizes[opcode]
 
     elif opcode == 2:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        param3 = memory[instruction_pointer+3]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        memory[param3] = val1 * val2
-
-        address += 4
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        memory[memory[instruction_pointer+3]] = val1 * val2
+        address += opcode_sizes[opcode]
 
     elif opcode == 3:
-        param1 = memory[instruction_pointer+1]
         print "Enter value: "
-        memory[param1] = int(input())
-        address += 2
+        memory[memory[instruction_pointer+1]] = int(input())
+        address += opcode_sizes[opcode]
 
     elif opcode == 4:
-        param1 = memory[instruction_pointer+1]
-        modes = modes.ljust(1,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        print val1
-        address += 2
+        print immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        address += opcode_sizes[opcode]
 
     elif opcode == 5:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        if val1 != 0:
-            address = val2
-        else:
-            address += 3
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        address = val2 if val1 != 0 else address + opcode_sizes[opcode]
 
     elif opcode == 6:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        if val1 == 0:
-            address = val2
-        else:
-            address += 3
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        address = val2 if val1 == 0 else address + opcode_sizes[opcode]
 
     elif opcode == 7:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        param3 = memory[instruction_pointer+3]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        if val1 < val2:
-            memory[param3] = 1
-        else:
-            memory[param3] = 0
-
-        address += 4
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        memory[memory[instruction_pointer+3]] = 1 if val1 < val2 else 0
+        address += opcode_sizes[opcode]
 
     elif opcode == 8:
-        param1 = memory[instruction_pointer+1]
-        param2 = memory[instruction_pointer+2]
-        param3 = memory[instruction_pointer+3]
-        modes = modes.ljust(2,'0')
-
-        if modes[0] == '1':
-            val1 = param1
-        else:
-            val1 = memory[param1]
-
-        if modes[1] == '1':
-            val2 = param2
-        else:
-            val2 = memory[param2]
-
-        if val1 == val2:
-            memory[param3] = 1
-        else:
-            memory[param3] = 0
-
-        address += 4
+        val1 = immediate_value(instruction_pointer+1) if immediate_mode(modes,0) else position_value(instruction_pointer+1)
+        val2 = immediate_value(instruction_pointer+2) if immediate_mode(modes,1) else position_value(instruction_pointer+2)
+        memory[memory[instruction_pointer+3]] = 1 if val1 == val2 else 0
+        address += opcode_sizes[opcode]
 
     elif opcode == 99:
         break
