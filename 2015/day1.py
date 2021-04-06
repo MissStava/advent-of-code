@@ -1,8 +1,8 @@
-UP = '('
-DOWN = ')'
-
 with open('day1.input', 'r') as file:
   data = file.read().replace('\n', '')
+
+UP = '('
+DOWN = ')'
 
 final_floor = data.count(UP) - data.count(DOWN)
 print("Part 1 answer = {}".format(final_floor))
