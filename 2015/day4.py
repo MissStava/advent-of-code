@@ -17,4 +17,7 @@ def find_increment(input, final_state):
 input = "yzbqklnj"
 
 print("Part 1 answer = {}".format(find_increment(input, "00000")))
+# 282749
+
 print("Part 2 answer = {}".format(find_increment(input, "000000")))
+# 9962624

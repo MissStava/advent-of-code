@@ -19,6 +19,8 @@ def calculate_ribbon(line):
 
 wrapping_paper = sum([calculate_wrapping_paper(line) for line in data])
 print("Part 1 answer = {}".format(wrapping_paper))
+# 1586300
 
 ribbon = sum([calculate_ribbon(line) for line in data])
 print("Part 2 answer = {}".format(ribbon))
+# 3737498
